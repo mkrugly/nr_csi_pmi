@@ -100,9 +100,11 @@ You’ll also see all intermediate computation steps, making it a valuable tool 
     '0xf843000000000000000000000000000000000000'
     >>> pmi.i17.i172
     '0xa000000000'
+```
 
 - Show step by step precoding matrix generation with all the intermediate results::
 
+```
     >>> pmi.log_verbose()
     INFO:nr_csi_pmi.rel16:<class 'nr_csi_pmi.base.Vm1m2'>: m1=[np.int64(9), np.int64(1), np.int64(5), np.int64(9)], m2=[np.int64(0), np.int64(4), np.int64(4), np.int64(4)]
     [[ 1.   +0.j     1.   +0.j     1.   +0.j     1.   +0.j     0.   +0.j    0.   +0.j     0.   +0.j     0.   +0.j   ]
