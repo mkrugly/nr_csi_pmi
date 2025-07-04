@@ -1,10 +1,20 @@
 # nr_csi_pmi
 
-Ever struggled to understand how the precoding matrices are generated from the 5G New Radio CSI codebook typeII and typeII-rel16 reports or how to generate these PMI coefficients for beams selected from the DFT beam grid?
-Or maybe you wondered how different coefficients influence the precoding matrix construction?
+Ever struggled to understand how precoding matrices are generated from the 5G New Radio (NR) CSI Codebook Type II and Type II-Rel16 reports?
+Or perhaps you've wondered how to generate PMI coefficients for beams selected from a DFT beam grid — or how different coefficients influence the resulting precoding matrix?
 
-The `nr_csi_pmi` is a Python module that helps you with that. Simply provide the PMI coefficients reported by the UE in a CSI codebook typeII and typeII-rel16 report or select DFT beams parameters yourself
-and the module will generate the corresponding precoding matrices according to the 3gpp TS 38.214 (chap. 5.2.2.2.3 and 5.2.2.2.5) showing all the intermediate steps.
+The `nr_csi_pmi` Python module is here to help.
+
+It allows you to:
+- Input PMI coefficients reported by the UE in CSI Codebook Type II or Type II-Rel16 reports,
+or
+- Manually specify DFT beam parameters.
+  
+The module then generates the corresponding precoding matrices according to 3GPP TS 38.214, specifically:
+- Section 5.2.2.2.3 — Precoding for Type II codebooks with 2D antenna arrays
+- Section 5.2.2.2.5 — Extensions for Rel-16
+  
+You’ll also see all intermediate computation steps, making it a valuable tool for learning, debugging, or prototyping.
 
 
 ## Examples
