@@ -92,6 +92,7 @@ class Base:
             v = ""
         if size:
             v = v.zfill(size)
+            v = v[:size]
         return v
 
     @classmethod

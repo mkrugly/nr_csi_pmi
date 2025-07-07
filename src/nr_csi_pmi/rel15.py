@@ -404,7 +404,7 @@ class X1:
 
     @property
     def as_hex(self) -> str:
-        return hex(int(self.as_bin, 2))
+        return hex(Base.align_bit_length(v=int(self.as_bin, 2), size=len(self.as_bin), factor=4))
 
     @property
     def strongest(self) -> list[int]:
@@ -503,7 +503,7 @@ class X2:
 
     @property
     def as_hex(self) -> str:
-        return hex(int(self.as_bin, 2))
+        return hex(Base.align_bit_length(v=int(self.as_bin, 2), size=len(self.as_bin), factor=4))
 
     @property
     def as_bin_odd(self) -> str:
@@ -850,7 +850,9 @@ class Pmi:
     def coefs_hex_part2(self) -> str:
         """
         """
-        return f"M1 {self.x1.i14.M_1} M2 {self.x1.i14.M_2} X {hex(int(self.x1.as_bin + self.x2.as_bin, 2))}"
+        x = self.x1.as_bin + self.x2.as_bin
+        return (f"M1 {self.x1.i14.M_1} M2 {self.x1.i14.M_2} X "
+                f"{hex(Base.align_bit_length(v=int(x, 2), size=len(x), factor=4))}")
 
     @property
     def beams(self) -> dict[str, Any]:
@@ -967,8 +969,7 @@ def example_pmi_generator(subbands: list[int]|str, Npsk: int=8, sbAmp: bool = Tr
     k2_size = len(k2_pattern)
     k2 = {
         (1, True): [(k2_pattern[i % k2_size][0],) for i in range(num_sb)],
-        (2, True): [([0, 1], [1, 0, 1]), ([1, 0], [1, 0, 1]), ([0, 1], [1, 0, 0]), ([1, 1], [1, 0, 0]), ([0, 0], [1, 1, 0]), ([0, 1], [1, 1, 0]), ([1, 1], [0, 0, 0]), ([1, 0], [0, 1, 0]), ([1, 1], [0, 1, 1]), ([0, 0], [0, 1, 1]), ([1, 1], [0, 1, 0]), ([1, 1], [0, 0, 0]), ([1, 1], [0, 0, 1]), ([1, 0], [1, 1, 1]), ([0, 0], [1, 0, 1]), ([0, 1], [1, 0, 0])],
-        #(2, True): [ k2_pattern[i % k2_size] for i in range(num_sb)],
+        (2, True): [ k2_pattern[i % k2_size] for i in range(num_sb)],
         (2, False): [(k2_pattern[i % k2_size][0], k2_pattern[i % k2_size][0]) for i in range(num_sb)],
     }
     c_pattern = [([2, 6], [1, 5, 4]), ([6, 4], [6, 5, 3]), ([3, 7], [1, 1, 2]), ([4, 7], [4, 0, 3])]
@@ -976,8 +977,7 @@ def example_pmi_generator(subbands: list[int]|str, Npsk: int=8, sbAmp: bool = Tr
     c_size = len(c_pattern)
     c = {
         (1, True): [(c_pattern[i % c_size][0],) for i in range(num_sb)],
-        (2, True): [([2, 6], [1, 5, 4]), ([6, 4], [6, 5, 3]), ([3, 7], [1, 1, 2]), ([4, 7], [4, 0, 3]), ([2, 3], [5, 7, 2]), ([4, 5], [2, 6, 3]), ([0, 3], [0, 7, 0]), ([5, 4], [2, 4, 7]), ([7, 4], [2, 1, 5]), ([5, 4], [4, 2, 2]), ([0, 4], [1, 2, 0]), ([4, 4], [1, 2, 1]), ([5, 2], [1, 2, 2]), ([1, 3], [2, 1, 6]), ([2, 3], [3, 7, 0]), ([0, 1], [1, 1, 6])],
-        #(2, True): [ c_pattern[i % c_size] for i in range(num_sb)],
+        (2, True): [ c_pattern[i % c_size] for i in range(num_sb)],
         (2, False): [(c_pattern[i % c_size][0], c_pattern[i % c_size][0]) for i in range(num_sb)],
     }
 
@@ -1000,20 +1000,16 @@ def example_pmi_generator(subbands: list[int]|str, Npsk: int=8, sbAmp: bool = Tr
 
 if __name__ == "__main__":
     logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
-    #pmi = example_coef_part2_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
-    #                                x="0x7cf5054cda9f9b6de3521f48574015adaa43cae2b033e9e24e38a7b1d3140057c2e5cbfa9bc6047c6242a75c",
-    #                                v=2, L=2, Npsk=8, sbAmp=True)
-    #pmi = example_coef_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
-    #                          x1="0x7BE050A1",
-    #                          x2="0x58D8D7C94C4EF460C718F11BB10A1AA8A594DF05D35759E07C9566EB14F2B224390A382D1D7049CC",
-    #                          m_l=(3, 4), v=2, L=2, Npsk=8, sbAmp=True)
-    #pmi = example_coef_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
-    #                                x1="0x7BD054A1",
-    #                                x2="0x58D8F9293BD0638F11A2142A2926F8D3573C0E559D8A7B2252144B47024E",
-    #                                m_l=(3, 4), v=2, L=2, Npsk=8, sbAmp=False)
-    #pmi = example_coef_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
-    #                                x1="0xF7A0A",
-    #                                x2="0xAFAFAFAF83838383",
-    #                                m_l=(3, 0), v=1, L=2, Npsk=4, sbAmp=False)
+    pmi = example_coef_part2_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
+                                    x="0xf7a0a942b1b1af92989de8c18e31e237621435514b29be0ba6aeb3c0f92acdd629e564487214705a3ae09398",
+                                    v=2, L=2, Npsk=8, sbAmp=True)
+    pmi = example_coef_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
+                                    x1="0xF7A0A942",
+                                    x2="0x58D8D7C94C4EF460C718F11BB10A1AA8A594DF05D35759E07C9566EB14F2B224390A382D1D7049CC",
+                                    m_l=(3, 4), v=2, L=2, Npsk=8, sbAmp=True)
+    pmi = example_coef_factory_test(ant_dim=(4, 2), subbands='01111111111111111',
+                                    x1="0xF7A0A",
+                                    x2="0xAFAFAFAF83838383",
+                                    m_l=(3, 0), v=1, L=2, Npsk=4, sbAmp=False)
     pmi = example_pmi_generator(subbands='01111111111111111', Npsk=8, sbAmp=True, v=2)
     pass
