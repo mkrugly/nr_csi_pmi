@@ -617,7 +617,7 @@ class P1(BaseMatrix):
 
 
 class BaseSb(BaseMatrix):
-    def __init__(self, x1: X1, x2: X2, dtype: np.dtype):
+    def __init__(self, x1: X1, x2: X2, dtype: npt.DTypeLike):
         self.i13: I13 = x1.i13
         self.i14: I14 = x1.i14
         self.x2: X2 = x2

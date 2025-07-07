@@ -110,10 +110,10 @@ class Base:
 
 
 class BaseMatrix:
-    def __init__(self, shape: tuple[int, int], dtype: np.dtype, vsplit: int = None, shape_desc: str = ""):
-        self._shape: tuple[int, int] = shape
+    def __init__(self, shape: tuple[int, ...], dtype: npt.DTypeLike, vsplit: int = None, shape_desc: str = ""):
+        self._shape: tuple[int, ...] = shape
         self._shape_desc: str = f" ({shape_desc})" or ""
-        self._dtype: np.dtype = dtype
+        self._dtype: npt.DTypeLike = dtype
         self._vsplit: int | None = vsplit or 1
         self._matrix: npt.NDArray = np.zeros(shape, dtype=dtype)
 
@@ -137,7 +137,7 @@ class BaseMatrix:
         return np.vsplit(self.matrix, self._vsplit)
 
     @property
-    def shape(self) -> tuple[int, int]:
+    def shape(self) -> tuple[int,...]:
         return self.matrix.shape
 
     @property
@@ -145,7 +145,7 @@ class BaseMatrix:
         return self._shape_desc
 
     @property
-    def dtype(self) -> np.dtype:
+    def dtype(self) -> npt.DTypeLike:
         return self.matrix.dtype
 
     @property

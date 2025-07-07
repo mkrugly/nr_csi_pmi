@@ -179,7 +179,7 @@ class Yl(Base):
         return self._matrix
 
     @property
-    def shape(self) -> tuple[int, int]:
+    def shape(self) -> tuple[int,...]:
         return self.matrix.shape
 
     @property
@@ -324,7 +324,7 @@ class Y:
         return len(self.as_list)
 
     @property
-    def shape(self) -> tuple[int, int]:
+    def shape(self) -> tuple[int, ...]:
         return self.get_yl_for_l(l=1).shape
 
     @property
@@ -408,19 +408,19 @@ class I23l(Base):
             assert 0 <= v < _v_max, f"i23{i + 1}:{v} value out of range (min: 0, max:{_v_max - 1})"
 
     @property
-    def i231(self) -> str:
+    def i231(self) -> int | None:
         return self.i23l_for_l(1)
 
     @property
-    def i232(self) -> str:
+    def i232(self) -> int | None:
         return self.i23l_for_l(2)
 
     @property
-    def i233(self) -> str:
+    def i233(self) -> int | None:
         return self.i23l_for_l(3)
 
     @property
-    def i234(self) -> str:
+    def i234(self) -> int | None:
         return self.i23l_for_l(4)
 
     @property
@@ -436,7 +436,7 @@ class I23l(Base):
             return None
         return self._i23l_list[l - 1]
 
-    def p1_for_l(self, l: int) -> int | None:
+    def p1_for_l(self, l: int) -> float | None:
         if len(self._i23l_list) < l or l < 1:
             return None
         return K1P1.p1(self._i23l_list[l - 1])
@@ -557,7 +557,7 @@ class I18l(Base):
         self._size = self._size_l * v
         self._i18l_list: list[int] = []
         self._i18l_list_flat: list[int] = []
-        self._i18l_lifs: list[tuple[Any]] = []
+        self._i18l_lifs: list[tuple[int,...]] = []
         self._from_i18(i18)
         self._validate()
 
@@ -735,7 +735,7 @@ class I17l(Base):
 
     @property
     def i174_bin(self) -> str:
-        return self.i17l_for_l41
+        return self.i17l_for_l(4)
 
     @property
     def i171(self) -> str:
@@ -830,7 +830,7 @@ class I17l(Base):
         return 2 * L * v * _pi_f + v * i + l
 
     @classmethod
-    def pri_for_all(cls, n3l: list[list[int]], L: int, N3: int, v: int) -> dict[tuple[int, int, int], tuple[int, int]]:
+    def pri_for_all(cls, n3l: list[list[int]], L: int, N3: int, v: int) -> dict[tuple[int, int, int], tuple[int, int, int]]:
         d = {}
         M_v = len(n3l[0])
         for l in range(1, v + 1):
@@ -901,7 +901,7 @@ class P1(BaseMatrix):
 
 
 class BaseSb(BaseMatrix):
-    def __init__(self, i17: I17l, i18: I18l, dtype: np.dtype, sb_coef):
+    def __init__(self, i17: I17l, i18: I18l, dtype: npt.DTypeLike, sb_coef):
         self.i17l: I17l = i17
         self.i18l: I18l = i18
         self._sb_coef = sb_coef
@@ -1326,7 +1326,7 @@ class PmiGenerator:
                             i17=i17, i18=i18, i23=i23, i24=i24, i25=i25)
 
 
-def example_coef_factory_test_v4(verbose: bool = True):
+def example_coef_factory_test_v4(verbose: bool = True) -> Pmi:
     """Example function showcasing precoding matrix calculation for the given PMI coefficients
     """
     coefs = {
@@ -1346,6 +1346,7 @@ def example_coef_factory_test_v4(verbose: bool = True):
     if verbose:
         pmi.log_verbose()
     pmi.log_summary()
+    return pmi
 
 
 def example_beam_factory_test_v1(verbose: bool = True) -> Pmi:
@@ -1442,6 +1443,7 @@ def example_pmi_generator(ant_dim: tuple[int, int] | None = None, comb_inx: int 
 
 if __name__ == "__main__":
     logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
-    #example_coef_factory_test_v4()
-    #example_beam_factory_test_v1()
-    example_pmi_generator(ant_dim=(4, 2), comb_inx=6, N3=18, R=1, v=4)
+    #pmi = example_coef_factory_test_v4()
+    #pmi = example_beam_factory_test_v1()
+    pmi = example_pmi_generator(ant_dim=(4, 2), comb_inx=6, N3=18, R=1, v=4)
+    pass
