@@ -632,7 +632,12 @@ class BaseSb(BaseMatrix):
 
     @property
     def strongest_pos(self) -> list[int]:
-        return np.argsort(-np.asarray(self.i14.as_list_tuple)).tolist()
+        # from reported i14, get positions of strongest beams sorted in descending order
+        _sorted_i14_pos = np.argsort(-np.asarray(self.i14.as_list_tuple))
+        # convert i13 list to column vector (to match the layer dimension in i14 array
+        _i13_pos_vec = np.c_[self.i13.as_int_list]
+        # increment all i14 positions >= i13 to get the absolute position (considering the strongest, not reported beam)
+        return np.add(_sorted_i14_pos, 1, out=_sorted_i14_pos, where=_sorted_i14_pos >= _i13_pos_vec).tolist()
 
 
 class P2(BaseSb):
@@ -643,12 +648,11 @@ class P2(BaseSb):
     def _init(self):
         # set all values to 1
         self.matrix[:] = K2P2.p2(1)
-        sorted_pos = self.strongest_pos
         for s, x2sb in enumerate(self.x2.as_list):
             if not x2sb.sbAmp:
                 break
             for l, k2l in enumerate(x2sb.k2):
-                _pos_flat = np.array(sorted_pos[l][:len(k2l)]) + self.shape[1]*(s+l*self.num_sb)
+                _pos_flat = np.sort(np.array(self.strongest_pos[l][:len(k2l)])) + self.shape[1]*(s+l*self.num_sb)
                 _p2 = [K2P2.p2(i) for i in k2l]
                 assert len(_p2) > 0, f"Missing subband parameters: k_2/p_2 not found (sb#{x2sb.subband}, sbAmp:{x2sb.sbAmp})"
                 np.put(self.matrix, _pos_flat, _p2)
@@ -667,10 +671,9 @@ class Phi(BaseSb):
     def _init(self):
         # set all values to 1
         self.matrix[:] = 1
-        sorted_pos = self.strongest_pos
         for s, x2sb in enumerate(self.x2.as_list):
             for l, c_phil in enumerate(x2sb.c):
-                _pos_flat = np.array(sorted_pos[l][:len(c_phil)]) + self.shape[1] * (s + l * self.num_sb)
+                _pos_flat = np.sort(np.array(self.strongest_pos[l][:len(c_phil)])) + self.shape[1] * (s + l * self.num_sb)
                 _num_l = x2sb.i21.min_K2_M_l[l]
                 _npsk = x2sb.i21.Npsk
                 _phi = [np.around(np.exp((1j * 2 * np.pi * c) / (_npsk if i < _num_l else 4)), 3)
@@ -743,7 +746,7 @@ class W(BaseMatrix):
         self._matrix *= self._get_w_scaling()
 
     def _get_w_scaling(self) -> float:
-        _lst = (1, 0.5)
+        _lst = (1, 1/2**0.5)
         return _lst[self._v - 1] if 0 < self._v <= len(_lst) else 1
 
     @property
